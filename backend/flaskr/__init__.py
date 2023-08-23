@@ -1,11 +1,5 @@
-import os
-from operator import and_
-
 from flask import Flask, request, abort, jsonify
-from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
-import random
-
 from models import setup_db, Question, Category
 
 QUESTIONS_PER_PAGE = 10
@@ -136,10 +130,10 @@ def create_app(test_config=None):
             abort(400)
         try:
             questions = (
-                Question.query.filter(Question.question.ilike("%{}%".format(search)))
-                .order_by(Question.id)
-                .all()
-            )
+                Question.query.filter(
+                    Question.question.ilike(
+                        "%{}%".format(search))) .order_by(
+                    Question.id) .all())
             paginated_questions = paginate_questions(request.args, questions)
 
             current_category = None
@@ -187,7 +181,8 @@ def create_app(test_config=None):
 
             filters = []
 
-            if quiz_category and "id" in quiz_category and quiz_category["id"] != 0:
+            if quiz_category and "id" in quiz_category \
+                    and quiz_category["id"] != 0:
                 filters.append(Question.category == quiz_category["id"])
 
             if previous_questions:
@@ -199,7 +194,10 @@ def create_app(test_config=None):
                 question = Question.query.first()
 
             return jsonify(
-                {"success": True, "question": question.format() if question else None}
+                {
+                    "success": True,
+                    "question": question.format() if question else None
+                }
             )
         except Exception:
             abort(422)
@@ -207,35 +205,49 @@ def create_app(test_config=None):
     @app.errorhandler(400)
     def bad_request(error):
         return (
-            jsonify({"success": False, "error": 400, "message": "bad request"}),
+            jsonify(
+                {
+                    "success": False,
+                    "error": 400,
+                    "message": "bad request"
+                }
+            ),
             400,
         )
 
     @app.errorhandler(401)
     def bad_request(error):
         return (
-            jsonify({"success": False, "error": 401, "message": "not authorized"}),
+            jsonify(
+                {
+                    "success": False,
+                    "error": 401,
+                    "message": "not authorized"
+                }
+            ),
             401,
         )
 
     @app.errorhandler(404)
     def not_found(error):
-        return (
-            jsonify({"success": False, "error": 404, "message": "resource not found"}),
-            404,
-        )
+        return (jsonify({"success": False, "error": 404,
+                         "message": "resource not found"}), 404, )
 
     @app.errorhandler(405)
     def not_allowed(error):
-        return (
-            jsonify({"success": False, "error": 405, "message": "method not allowed"}),
-            405,
-        )
+        return (jsonify({"success": False, "error": 405,
+                         "message": "method not allowed"}), 405, )
 
     @app.errorhandler(422)
     def unprocessable(error):
         return (
-            jsonify({"success": False, "error": 422, "message": "unprocessable"}),
+            jsonify(
+                    {
+                        "success": False,
+                        "error": 422,
+                        "message": "unprocessable"
+                    }
+                 ),
             422,
         )
 
@@ -243,9 +255,16 @@ def create_app(test_config=None):
     def internal_server_error(error):
         return (
             jsonify(
-                {"success": False, "error": 500, "message": "internal server error"}
+                        {
+                            "success": False,
+                            "error": 500,
+                            "message": "internal server error"
+                        }
+
             ),
             500,
         )
 
     return app
+
+
